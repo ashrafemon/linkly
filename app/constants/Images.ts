@@ -1,4 +1,4 @@
-import BgImage from "../../public/bg.png";
+import BgImage from "@/public/bg.png";
 
 const Images = {
     BgImage,
