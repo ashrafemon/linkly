@@ -2,7 +2,9 @@ import ShortenerRepository from "../repositories/ShortenerRepository";
 import { ShortenerBody, ShortenerQueries } from "../types/ShortenerTypes";
 
 export default class ShortenerController {
-    constructor(private readonly repository = new ShortenerRepository()) {}
+    private readonly repository = new ShortenerRepository();
+
+    constructor() {}
 
     async index(queries: ShortenerQueries) {
         return await this.repository.index(queries);

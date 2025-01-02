@@ -7,11 +7,11 @@
         @apply w-full border-separate border-spacing-y-1;
 
         th {
-            @apply p-3 py-6 bg-[#181E29] first:rounded-tl-md last:rounded-tr-md text-left min-w-[120px];
+            @apply p-3 py-6 bg-[#181E29] first:rounded-tl-md last:rounded-tr-md text-left;
         }
 
         td {
-            @apply p-3 bg-[#181E29]/70;
+            @apply p-3 bg-[#181E29]/70 min-w-[140px] max-w-[400px] whitespace-nowrap text-ellipsis overflow-hidden;
         }
     }
 }

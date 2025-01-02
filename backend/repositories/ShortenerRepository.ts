@@ -4,11 +4,9 @@ import Shortener from "../models/Shortener";
 import { ShortenerBody, ShortenerQueries } from "../types/ShortenerTypes";
 
 export default class ShortenerRepository {
-    private helper;
+    private readonly helper = new HelperService();
 
-    constructor() {
-        this.helper = new HelperService();
-    }
+    constructor() {}
 
     async index(queries: ShortenerQueries) {
         try {
@@ -22,7 +20,6 @@ export default class ShortenerRepository {
         } catch (err) {
             return this.helper.errorResponse({
                 statusCode: 500,
-                data: err,
                 message: (err as Error).message,
             });
         }
@@ -30,6 +27,25 @@ export default class ShortenerRepository {
 
     async store(body: ShortenerBody) {
         try {
+            const validateError = {
+                status: "validateError",
+                statusCode: 422,
+                message: "Validation error occurred",
+            };
+
+            if (!body.url) {
+                return this.helper.errorResponse({
+                    ...validateError,
+                    data: { url: "The url field is required" },
+                });
+            }
+            if (body.url.length < 5) {
+                return this.helper.errorResponse({
+                    ...validateError,
+                    data: { url: "The url field must be minimum 5 characters" },
+                });
+            }
+
             const code = randomstring.generate(10);
             const shortener = await Shortener.create({
                 ...body,
@@ -43,7 +59,6 @@ export default class ShortenerRepository {
         } catch (err) {
             return this.helper.errorResponse({
                 statusCode: 500,
-                data: err,
                 message: (err as Error).message,
             });
         }
@@ -52,17 +67,19 @@ export default class ShortenerRepository {
     async show(id: string, queries: ShortenerQueries) {
         try {
             const searchKey = queries.searchKey ?? "id";
+            console.log({ searchKey, id });
             const doc = await Shortener.findOne({ where: { [searchKey]: id } });
             if (!doc) {
                 return this.helper.errorResponse({
                     message: "Linkly url not found...",
                 });
             }
+            await doc.increment(["clickCount"], { by: 1 });
+
             return this.helper.entityResponse({ data: doc });
         } catch (err) {
             return this.helper.errorResponse({
                 statusCode: 500,
-                data: err,
                 message: (err as Error).message,
             });
         }

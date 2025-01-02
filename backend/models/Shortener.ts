@@ -15,6 +15,10 @@ const Shortener = database.define("Shortener", {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    clickCount: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+    },
     status: {
         type: DataTypes.STRING,
         defaultValue: "active",
